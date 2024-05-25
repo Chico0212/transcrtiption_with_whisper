@@ -3,10 +3,11 @@
 
 from sys import argv
 import os
+import whisper
 
 def path_treatment(dir: str) -> tuple[str]:
-    if "/" not in dir or "\\" not in dir:
-        raise f"""[ERRO] PATH "{dir}" INVÁLIDO"""
+    if "/" not in dir and "\\" not in dir:
+        raise BaseException(f"""[ERRO] PATH "{dir}" INVÁLIDO""")
     return dir, dir.split("/")[-1]
 
 def write_files(files, audio_dir_path, audio_dir_name):
@@ -24,13 +25,20 @@ def write_files(files, audio_dir_path, audio_dir_name):
 def start_transcription(audio_dir_path, audio_dir_name):
     try:
         files = sorted(os.listdir(f"{audio_dir_path}"), key=lambda x: x.split(".")[0])
-    except:
+    except :
         print(f"[ALERTA] DIRETÓRIO: {audio_dir_name} NÃO ENCONTRADO")
         return
 
     write_files(files, audio_dir_path, audio_dir_name)
 
 def call_whisper(file, audio_dir_path):
+    # return whisper.load_model("tiny")\
+    #     .transcribe(
+    #         audio=f"{audio_dir_path}/{file}", 
+    #         decode_options={"language": "pt"}, 
+    #         verbose=False,
+    #         )
+    
     command_line = f"whisper --model tiny {audio_dir_path}/{file} --language pt -f txt --verbose False -o {audio_dir_path}/output"
     os.system(command_line)
 
