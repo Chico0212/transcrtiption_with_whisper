@@ -4,7 +4,7 @@
 
 * python3.10
 * whisper
-  * Para instalação completa seguir o [tutorial](youtube.com)  
+  * Para instalação completa seguir o [tutorial](https://github.com/openai/whisper)
 
 ## Funcionamento
 
