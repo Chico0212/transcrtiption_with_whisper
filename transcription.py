@@ -4,10 +4,10 @@
 from sys import argv
 import os
 
-def get_abs_path(dir: str) -> tuple[str]:
-    if dir[0] == "/" or dir[:2] == "./" or dir[:3] == "../":
-        return dir, dir.split("/")[-1]
-    return f"./{dir}", dir.split("/")[-1]
+def path_treatment(dir: str) -> tuple[str]:
+    if "/" not in dir or "\\" not in dir:
+        raise f"""PATH "{dir}" INVÁLIDO"""
+    return dir, dir.split("/")[-1]
 
 def write_output(audio_dir_path, audio_dir_name):
     try:
@@ -35,4 +35,4 @@ def call_whisper(file, audio_dir_path):
 if __name__ == "__main__":
     directories = argv[1:]
     for directory in directories:
-        write_output(*get_abs_path(directory))
+        write_output(*path_treatment(directory))
