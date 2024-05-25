@@ -12,4 +12,3 @@
   chmod +x transcription.py
   ./transcription.py <caminho_pro_arquivo_de_audio>
   ```
-
