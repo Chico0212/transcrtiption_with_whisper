@@ -6,27 +6,29 @@ import os
 
 def path_treatment(dir: str) -> tuple[str]:
     if "/" not in dir or "\\" not in dir:
-        raise f"""PATH "{dir}" INVÁLIDO"""
+        raise f"""[ERRO] PATH "{dir}" INVÁLIDO"""
     return dir, dir.split("/")[-1]
 
-def write_output(audio_dir_path, audio_dir_name):
-    try:
-        files = sorted(os.listdir(f"{audio_dir_path}"), key=lambda x: x.split(".")[0])
-    except:
-        print(f"DIRETÓRIO: {audio_dir_name} NÃO ENCONTRADO")
-        return
-
+def write_files(files, audio_dir_path, audio_dir_name):
     is_h1_setted = False
     for file in files:
         name = file.split(".")[0]
         call_whisper(file, audio_dir_path)
-        with open(f"{audio_dir_path}/output/{name}.txt") as text:
-            with open(f"{audio_dir_path}/transcricao.md", "a") as audio_markdown:
-                if not is_h1_setted:
-                    audio_markdown.write(f"# Transcrições dos audios de {audio_dir_name}\n\n")
-                    is_h1_setted = True
+        with open(f"{audio_dir_path}/output/{name}.txt") as text, open(f"{audio_dir_path}/transcricao.md", "a") as audio_markdown:
+            if not is_h1_setted:
+                audio_markdown.write(f"# Transcrições dos audios de {audio_dir_name}\n\n")
+                is_h1_setted = True
 
-                audio_markdown.write(f"## {audio_dir_name} audio {name}\n\n{text.read()}\n")
+            audio_markdown.write(f"## {audio_dir_name} audio {name}\n\n{text.read()}\n")
+
+def start_transcription(audio_dir_path, audio_dir_name):
+    try:
+        files = sorted(os.listdir(f"{audio_dir_path}"), key=lambda x: x.split(".")[0])
+    except:
+        print(f"[ALERTA] DIRETÓRIO: {audio_dir_name} NÃO ENCONTRADO")
+        return
+
+    write_files(files, audio_dir_path, audio_dir_name)
 
 def call_whisper(file, audio_dir_path):
     command_line = f"whisper --model tiny {audio_dir_path}/{file} --language pt -f txt --verbose False -o {audio_dir_path}/output"
@@ -35,4 +37,4 @@ def call_whisper(file, audio_dir_path):
 if __name__ == "__main__":
     directories = argv[1:]
     for directory in directories:
-        write_output(*path_treatment(directory))
+        start_transcription(*path_treatment(directory))
